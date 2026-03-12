@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+  <name>SVG Explode - Extract Closed Regions</name>
+  <id>org.svgexplode.extract_regions</id>
+  <param name="spacing" type="float" min="0" max="100" gui-text="Spacing between pieces (mm):">5.0</param>
+  <param name="grid_res" type="float" min="0.1" max="2.0" gui-text="Grid resolution (mm, smaller = more accurate):">0.25</param>
+  <param name="rotations" type="optiongroup" appearance="combo" gui-text="Rotation search:">
+    <option value="none">None (0° only)</option>
+    <option value="cardinal">Cardinal (0°, 90°, 180°, 270°)</option>
+    <option value="fine">Fine (every 45°)</option>
+    <option value="finest">Finest (every 15°)</option>
+  </param>
+  <param name="pack" type="bool" gui-text="Pack pieces (uncheck to keep in place)">true</param>
+  <effect>
+    <object-type>path</object-type>
+    <effects-menu>
+      <submenu name="Generate from Path"/>
+    </effects-menu>
+  </effect>
+  <script>
+    <command location="inx" interpreter="python">svgexplode_ext.py</command>
+  </script>
+</inkscape-extension>
