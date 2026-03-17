@@ -8,7 +8,8 @@ import tempfile
 # Locate project dir: the extension files should be siblings of svgexplode.py,
 # or svgexplode.py should be in the same directory. If not, fall back to
 # the directory containing this extension script.
-EXT_DIR = os.path.dirname(os.path.abspath(__file__))
+# Resolve symlinks so we find the real repo location
+EXT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 # Add project dir (where svgexplode.py lives) to the path
 # Check if svgexplode.py is alongside this extension file
@@ -71,16 +72,23 @@ class SvgExplodeEffect(inkex.EffectExtension):
         }
         rotations = rot_map.get(self.options.rotations, (0, 90, 180, 270))
 
+        # Remove any regions from a previous run
+        for elem in self.svg.xpath("//svg:path[starts-with(@id, 'region_')]"):
+            elem.getparent().remove(elem)
+
         # Collect paths from selection, or all paths if nothing selected
+        # Skip any leftover region paths
         svg_paths = []
         path_elements = []
 
         if self.svg.selection:
             for elem in self.svg.selection.filter(inkex.PathElement):
-                path_elements.append(elem)
+                if not (elem.get("id") or "").startswith("region_"):
+                    path_elements.append(elem)
         else:
             for elem in self.svg.xpath("//svg:path"):
-                path_elements.append(elem)
+                if not (elem.get("id") or "").startswith("region_"):
+                    path_elements.append(elem)
 
         if len(path_elements) < 2:
             inkex.errormsg("SVG Explode needs at least 2 paths to find intersections.")
@@ -101,6 +109,9 @@ class SvgExplodeEffect(inkex.EffectExtension):
 
         # Run the core algorithm
         events = find_all_intersections(svg_paths)
+        if not events:
+            inkex.errormsg("No intersections found between paths.")
+            return
         segments = split_paths_at_events(svg_paths, events)
         graph_nodes, graph_edges = build_planar_graph(segments)
         pruned_edges = prune_graph(graph_nodes, graph_edges)

@@ -49,12 +49,37 @@ python svgexplode.py input.svg output.svg       # explicit output path
 
 ### Inkscape extension
 
-Point Inkscape at the repo directory so it picks up the extension automatically:
+**Option A: Add the repo as an extensions directory (recommended)**
 
 1. Open Inkscape
 2. Go to **Edit > Preferences > System**
 3. Under **User extensions**, click the folder icon and add the path to this repo
 4. Restart Inkscape
+
+**Option B: Symlink into your existing extensions directory**
+
+Linux:
+```bash
+ln -s /path/to/svgexplode/svgexplode.inx ~/.config/inkscape/extensions/
+ln -s /path/to/svgexplode/svgexplode_ext.py ~/.config/inkscape/extensions/
+ln -s /path/to/svgexplode/svgexplode.py ~/.config/inkscape/extensions/
+```
+
+macOS:
+```bash
+ln -s /path/to/svgexplode/svgexplode.inx ~/Library/Application\ Support/org.inkscape.Inkscape/config/inkscape/extensions/
+ln -s /path/to/svgexplode/svgexplode_ext.py ~/Library/Application\ Support/org.inkscape.Inkscape/config/inkscape/extensions/
+ln -s /path/to/svgexplode/svgexplode.py ~/Library/Application\ Support/org.inkscape.Inkscape/config/inkscape/extensions/
+```
+
+Windows (run as admin):
+```cmd
+mklink %APPDATA%\inkscape\extensions\svgexplode.inx C:\path\to\svgexplode\svgexplode.inx
+mklink %APPDATA%\inkscape\extensions\svgexplode_ext.py C:\path\to\svgexplode\svgexplode_ext.py
+mklink %APPDATA%\inkscape\extensions\svgexplode.py C:\path\to\svgexplode\svgexplode.py
+```
+
+Then restart Inkscape.
 
 The extension appears under **Extensions > Generate from Path > SVG Explode - Extract Closed Regions**.
 
